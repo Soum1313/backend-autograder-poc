@@ -1,0 +1,26 @@
+{
+  "description": "Shared Todo API test cases, run identically against Solution A and Solution B.",
+  "seed": [
+    { "_seed": true, "title": "Buy milk", "done": false, "priority": 1 },
+    { "_seed": true, "title": "Write report", "done": true, "priority": 5 }
+  ],
+  "cases": [
+    { "id": "create-valid", "category": "create", "request": { "method": "POST", "path": "/todos", "body": { "title": "Walk the dog", "priority": 2 } }, "expect": { "status": 201, "bodyContains": { "title": "Walk the dog", "done": false, "priority": 2 } } },
+    { "id": "create-missing-title", "category": "create", "request": { "method": "POST", "path": "/todos", "body": { "priority": 2 } }, "expect": { "status": 400 } },
+    { "id": "create-default-done", "category": "create", "request": { "method": "POST", "path": "/todos", "body": { "title": "Default check" } }, "expect": { "status": 201, "bodyContains": { "done": false, "priority": 0 } } },
+
+    { "id": "read-all", "category": "read", "request": { "method": "GET", "path": "/todos" }, "expect": { "status": 200, "minLength": 2 } },
+    { "id": "read-by-id", "category": "read", "request": { "method": "GET", "path": "/todos/{{seed0}}" }, "expect": { "status": 200, "bodyContains": { "title": "Buy milk" } } },
+    { "id": "read-nonexistent", "category": "read", "request": { "method": "GET", "path": "/todos/000000000000000000000000" }, "expect": { "status": 404 } },
+    { "id": "read-filter-done", "category": "read", "request": { "method": "GET", "path": "/todos?done=true" }, "expect": { "status": 200, "allMatch": { "done": true } } },
+    { "id": "read-sort-priority", "category": "read", "request": { "method": "GET", "path": "/todos?sort=priority" }, "expect": { "status": 200, "sortedDescBy": "priority" } },
+
+    { "id": "update-valid", "category": "update", "request": { "method": "PUT", "path": "/todos/{{seed0}}", "body": { "done": true } }, "expect": { "status": 200, "bodyContains": { "done": true } } },
+    { "id": "update-nonexistent", "category": "update", "request": { "method": "PUT", "path": "/todos/000000000000000000000000", "body": { "done": true } }, "expect": { "status": 404 } },
+    { "id": "update-partial", "category": "update", "request": { "method": "PUT", "path": "/todos/{{seed1}}", "body": { "priority": 9 } }, "expect": { "status": 200, "bodyContains": { "priority": 9, "title": "Write report" } } },
+
+    { "id": "delete-valid", "category": "delete", "request": { "method": "DELETE", "path": "/todos/{{seed1}}" }, "expect": { "status": 200 } },
+    { "id": "delete-then-read", "category": "delete", "request": { "method": "GET", "path": "/todos/{{seed1}}" }, "expect": { "status": 404 }, "runAfter": "delete-valid" },
+    { "id": "delete-nonexistent", "category": "delete", "request": { "method": "DELETE", "path": "/todos/000000000000000000000000" }, "expect": { "status": 404 } }
+  ]
+}

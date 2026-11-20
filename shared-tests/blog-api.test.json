@@ -1,0 +1,33 @@
+{
+  "description": "Harder stress-test cases for the blog API submission: nested routers, router-scoped auth middleware, pagination, and populate().",
+  "seedModel": "Post",
+  "seedCollection": "posts",
+  "seed": [
+    { "_seed": true, "title": "First Post", "body": "hello" },
+    { "_seed": true, "title": "Second Post", "body": "world" }
+  ],
+  "cases": [
+    { "id": "create-post-valid", "category": "create", "request": { "method": "POST", "path": "/posts", "body": { "title": "Walk the dog", "body": "later" } }, "expect": { "status": 201, "bodyContains": { "title": "Walk the dog", "published": false } } },
+    { "id": "create-post-missing-title", "category": "create", "request": { "method": "POST", "path": "/posts", "body": { "body": "no title" } }, "expect": { "status": 400 } },
+
+    { "id": "list-posts-default", "category": "read", "request": { "method": "GET", "path": "/posts" }, "expect": { "status": 200, "minLength": 3 } },
+    { "id": "list-posts-paginated", "category": "read", "request": { "method": "GET", "path": "/posts?page=1&limit=2" }, "expect": { "status": 200, "length": 2 } },
+
+    { "id": "get-post-by-id", "category": "read", "request": { "method": "GET", "path": "/posts/{{seed0}}" }, "expect": { "status": 200, "bodyContains": { "title": "First Post" } } },
+    { "id": "get-post-nonexistent", "category": "read", "request": { "method": "GET", "path": "/posts/000000000000000000000000" }, "expect": { "status": 404 } },
+
+    { "id": "comment-unauthorized", "category": "auth", "request": { "method": "POST", "path": "/posts/{{seed0}}/comments", "body": { "text": "hi" } }, "expect": { "status": 401 } },
+    { "id": "comment-missing-text", "category": "create", "request": { "method": "POST", "path": "/posts/{{seed0}}/comments", "headers": { "Authorization": "Bearer secret-token" }, "body": {} }, "expect": { "status": 400 } },
+    { "id": "comment-authorized", "category": "create", "request": { "method": "POST", "path": "/posts/{{seed0}}/comments", "headers": { "Authorization": "Bearer secret-token" }, "body": { "text": "nice post" } }, "expect": { "status": 201, "bodyContains": { "text": "nice post" } } },
+
+    { "id": "list-comments-authorized", "category": "read", "request": { "method": "GET", "path": "/posts/{{seed0}}/comments", "headers": { "Authorization": "Bearer secret-token" } }, "expect": { "status": 200, "minLength": 1 } },
+    { "id": "list-comments-unauthorized", "category": "auth", "request": { "method": "GET", "path": "/posts/{{seed0}}/comments" }, "expect": { "status": 401 } },
+
+    { "id": "get-post-populated-comments", "category": "read", "request": { "method": "GET", "path": "/posts/{{seed0}}" }, "expect": { "status": 200, "nestedArrayFirstItem": { "field": "commentIds", "contains": { "text": "nice post" } } } },
+
+    { "id": "comment-on-post2", "category": "create", "request": { "method": "POST", "path": "/posts/{{seed1}}/comments", "headers": { "Authorization": "Bearer secret-token" }, "body": { "text": "temporary" } }, "expect": { "status": 201 } },
+    { "id": "delete-post-cascades", "category": "delete", "request": { "method": "DELETE", "path": "/posts/{{seed1}}" }, "expect": { "status": 200 } },
+    { "id": "delete-then-get", "category": "delete", "request": { "method": "GET", "path": "/posts/{{seed1}}" }, "expect": { "status": 404 } },
+    { "id": "delete-then-list-comments", "category": "delete", "request": { "method": "GET", "path": "/posts/{{seed1}}/comments", "headers": { "Authorization": "Bearer secret-token" } }, "expect": { "status": 200, "length": 0 } }
+  ]
+}

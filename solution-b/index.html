@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Solution B — Custom Express/Mongoose adapter POC</title>
+  <style>
+    body { font-family: ui-monospace, monospace; max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+    #results { margin-top: 1rem; display: flex; flex-direction: column; gap: 2px; }
+    .pass { color: #0a7a2a; }
+    .fail { color: #c0392b; }
+    #timing { white-space: pre; background: #f4f4f4; padding: 0.75rem; margin-top: 1rem; }
+    button { font-size: 1rem; padding: 0.5rem 1rem; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>Solution B: esbuild-wasm + Express/Mongoose shim</h1>
+  <p>Runs the reference Todo API student submission through our own in-browser
+     Express-lite/Mongoose-lite adapter, inside a dedicated Worker, with zero
+     external services or accounts.</p>
+  <label for="problem-select">Problem:</label>
+  <select id="problem-select">
+    <option value="todo-api">Todo API (basic CRUD)</option>
+    <option value="blog-api">Blog API (nested routers, auth middleware, populate)</option>
+  </select>
+  <button id="run-btn">Run tests</button>
+  <p id="status"></p>
+  <pre id="timing"></pre>
+  <div id="results"></div>
+  <script type="module" src="./src/app.js?v=2"></script>
+</body>
+</html>

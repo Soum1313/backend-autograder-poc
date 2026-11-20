@@ -1,0 +1,10 @@
+# Netlify headers file: https://docs.netlify.com/platform/caching/custom-headers/
+#
+# Solution A (BrowserPod) needs cross-origin isolation (SharedArrayBuffer) to
+# boot at all - scoped to /solution-a/* only, since applying
+# Cross-Origin-Embedder-Policy: require-corp site-wide could block Solution
+# B's esbuild-wasm CDN fetch (esm.sh) if it doesn't send a matching
+# Cross-Origin-Resource-Policy header.
+/solution-a/*
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Embedder-Policy: require-corp

@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Solution A — BrowserPod real Node.js runtime POC</title>
+  <style>
+    body { font-family: ui-monospace, monospace; max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+    #results { margin-top: 1rem; display: flex; flex-direction: column; gap: 2px; }
+    .pass { color: #0a7a2a; }
+    .fail { color: #c0392b; }
+    #timing { white-space: pre; background: #f4f4f4; padding: 0.75rem; margin-top: 1rem; }
+    #pod-log { white-space: pre-wrap; background: #111; color: #0f0; padding: 0.75rem; margin-top: 1rem; height: 200px; overflow-y: auto; font-size: 0.8rem; }
+    button { font-size: 1rem; padding: 0.5rem 1rem; cursor: pointer; }
+    footer { margin-top: 2rem; font-size: 0.8rem; color: #666; }
+  </style>
+</head>
+<body>
+  <h1>Solution A: BrowserPod real Node.js runtime</h1>
+  <p>Boots a real Node.js 22 pod in-browser (free fetch network, no API key or
+     account), npm-installs real Express, runs the reference Todo API student
+     submission unmodified, and grades it over real loopback HTTP from inside
+     the Pod - no Portal, no cross-origin call.</p>
+  <label for="problem-select">Problem:</label>
+  <select id="problem-select">
+    <option value="todo-api">Todo API (basic CRUD)</option>
+    <option value="blog-api">Blog API (nested routers, auth middleware, populate)</option>
+  </select>
+  <button id="run-btn">Boot pod + run tests</button>
+  <p id="status"></p>
+  <pre id="timing"></pre>
+  <div id="results"></div>
+  <h3>Pod output</h3>
+  <pre id="pod-log"></pre>
+  <footer>Powered by <a href="https://browserpod.io" target="_blank" rel="noopener">BrowserPod</a></footer>
+  <script type="module" src="./src/app.js"></script>
+</body>
+</html>
